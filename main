@@ -1,1 +1,47 @@
+# Define the Player class with camelCase
+class Player:
+    def __init__(self, name, salary, years):
+        self.name = name
+        self.salary = salary
+        self.years = years
 
+# Function to calculate maximum contract for a new player with camelCase
+def maxContract(salaryCap, roster, newPlayerYears):
+    # Calculate the total salary currently used by the roster
+    currentSalary = sum(player.salary for player in roster)
+    
+    # Calculate the remaining cap space
+    remainingCapSpace = salaryCap - currentSalary
+
+    # Determine the maximum contract percentage based on the player's experience
+    if newPlayerYears < 7:
+        maxPercentage = 0.25
+    elif 7 <= newPlayerYears <= 10:
+        maxPercentage = 0.30
+    else:
+        maxPercentage = 0.35
+
+    # Calculate the maximum contract based on the cap percentage
+    maxAllowedContract = salaryCap * maxPercentage
+
+    # Return the minimum between the max allowed by the cap and the remaining cap space
+    return min(maxAllowedContract, remainingCapSpace)
+
+# Example usage
+salaryCap = 100_000_000  # Example salary cap in dollars
+
+# Creating players and adding them to the roster
+roster = [
+    Player("Player 1", 15_000_000, 5),
+    Player("Player 2", 20_000_000, 8),
+    Player("Player 3", 12_000_000, 3),
+    Player("Player 4", 8_000_000, 9),
+    Player("Player 5", 10_000_000, 12)
+]
+
+# Years in league for the new player you're considering
+newPlayerYears = 6
+
+# Calculate the maximum contract that can be offered to the new player
+maxOffer = maxContract(salaryCap, roster, newPlayerYears)
+print(f"The maximum contract you can offer is: ${maxOffer:,}")
