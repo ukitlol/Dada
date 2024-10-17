@@ -1,4 +1,4 @@
-# Define the Player class with camelCase
+# Define the Player class
 class Player:
     def __init__(self, name, salary, years, hasMajorAward=False, hasBirdRights=False):
         self.name = name
@@ -81,7 +81,7 @@ def negotiateExistingPlayer(salaryCap, roster):
 
 # Main function to run the program
 def main():
-    salaryCap = 148_588_000
+    salaryCap = 148_588_000  # Updated salary cap in dollars
 
     # Creating initial players and adding them to the roster
     roster = [
