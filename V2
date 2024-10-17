@@ -1,1 +1,131 @@
+# Define the Player class with camelCase
+class Player:
+    def __init__(self, name, salary, years, hasMajorAward=False, hasBirdRights=False):
+        self.name = name
+        self.salary = salary
+        self.years = years
+        self.hasMajorAward = hasMajorAward  # Whether the player has won a major award
+        self.hasBirdRights = hasBirdRights  # Whether the player has Bird Rights
 
+# Function to calculate the maximum contract based on player years, salary cap, award status, and Bird Rights
+def calculateMaxContract(salaryCap, currentSalary, player):
+    # Determine the maximum contract percentage based on the player's experience and awards
+    if player.years < 7:
+        if player.hasMajorAward:
+            maxPercentage = 0.30  # 30% of the cap if they have a major award
+        else:
+            maxPercentage = 0.25  # 25% of the cap otherwise
+    elif 7 <= player.years <= 10:
+        maxPercentage = 0.30
+    else:
+        maxPercentage = 0.35
+
+    # Calculate the maximum contract based on the cap percentage
+    maxAllowedContract = salaryCap * maxPercentage
+
+    # Calculate 105% of the player's previous salary
+    contract105Percent = player.salary * 1.05
+
+    # If the player has Bird Rights, the salary cap is ignored
+    if player.hasBirdRights:
+        finalMaxContract = max(contract105Percent, maxAllowedContract)  # No cap constraint
+    else:
+        remainingCapSpace = salaryCap - currentSalary  # Calculate remaining cap space
+        finalMaxContract = max(contract105Percent, min(maxAllowedContract, remainingCapSpace))  # Cap-constrained
+
+    return finalMaxContract
+
+# Function to calculate total salary used by the roster
+def calculateTotalSalary(roster):
+    return sum(player.salary for player in roster)
+
+# Function to add a new player
+def addNewPlayer(salaryCap, roster):
+    name = input("Enter the new player's name: ")
+    years = int(input(f"How many years has {name} been in the league? "))
+    majorAward = input(f"Has {name} won a major award (MVP, DPOY, etc.)? (yes/no): ").lower() == "yes"
+    birdRights = years >= 3 and input(f"Does {name} qualify for Bird Rights (been with the team for 3+ years)? (yes/no): ").lower() == "yes"
+
+    currentSalary = calculateTotalSalary(roster)
+    player = Player(name, 0, years, hasMajorAward=majorAward, hasBirdRights=birdRights)  # New player starts with a salary of 0
+    maxOffer = calculateMaxContract(salaryCap, currentSalary, player)
+    
+    print(f"The maximum contract you can offer {name} is: ${maxOffer:,}")
+    salary = float(input(f"Enter {name}'s new contract (maximum ${maxOffer:,}): "))
+
+    if salary <= maxOffer:
+        roster.append(Player(name, salary, years, hasMajorAward=majorAward, hasBirdRights=birdRights))
+        print(f"{name} has been added to the roster with a contract of ${salary:,}.")
+    else:
+        print(f"Contract exceeds the allowed maximum of ${maxOffer:,}. {name} was not added.")
+
+# Function to negotiate with an existing player
+def negotiateExistingPlayer(salaryCap, roster):
+    name = input("Enter the name of the player you want to negotiate with: ")
+    player = next((p for p in roster if p.name == name), None)
+
+    if player:
+        currentSalary = calculateTotalSalary(roster) - player.salary  # Exclude the current player's salary
+        maxOffer = calculateMaxContract(salaryCap, currentSalary, player)
+
+        print(f"The maximum new contract you can offer {name} is: ${maxOffer:,}")
+        salary = float(input(f"Enter {name}'s new contract (maximum ${maxOffer:,}): "))
+
+        if salary <= maxOffer:
+            player.salary = salary
+            print(f"{name}'s contract has been updated to ${salary:,}.")
+        else:
+            print(f"Contract exceeds the allowed maximum of ${maxOffer:,}. Negotiation failed.")
+    else:
+        print(f"Player {name} not found in the roster.")
+
+# Main function to run the program
+def main():
+    salaryCap = 148_588_000
+
+    # Creating initial players and adding them to the roster
+    roster = [
+        Player("Fred Van Fleet", 42_846_615, 8, hasBirdRights=True),
+        Player("Dillon Brooks", 22_255_493, 7),
+        Player("Steven Adams", 12_600_000, 11, hasBirdRights=True),
+        Player("Jalen Green", 12_483_048, 3),
+        Player("Reed Shepherd", 10_098_960, 1),
+        Player("Jabari Smith Jr", 9_770_880, 2),
+        Player("Jeff Green", 9_600_000, 16, hasBirdRights=True),
+        Player("Amen Thompson", 9_249_960, 2),
+        Player("Jock Landale", 8_000_000, 3),
+        Player("Jae'Sean Tate", 7_065_217, 4, hasBirdRights=True),
+        Player("Alperen Sengun", 5_424_654, 3),
+        Player("Aaron Holiday", 4_668_000, 6),
+        Player("Tari Eason", 3_695_160, 2),
+        Player("Cam Whitmore", 3_379_080, 1)
+    ]
+
+    while True:
+        print("\nOptions:")
+        print("1. Add a new player")
+        print("2. Negotiate contract with an existing player")
+        print("3. View roster")
+        print("4. Exit")
+
+        choice = input("Choose an option: ")
+
+        if choice == "1":
+            addNewPlayer(salaryCap, roster)
+        elif choice == "2":
+            negotiateExistingPlayer(salaryCap, roster)
+        elif choice == "3":
+            print("\nCurrent Roster:")
+            for player in roster:
+                awardStatus = " (Major Award Winner)" if player.hasMajorAward else ""
+                birdRightsStatus = " (Bird Rights)" if player.hasBirdRights else ""
+                print(f"{player.name}: ${player.salary:,}, {player.years} years in the league{awardStatus}{birdRightsStatus}")
+        elif choice == "4":
+            print("Exiting program.")
+            break
+        else:
+            print("Invalid option. Please try again.")
+
+# Run the program
+if __name__ == "__main__":
+    main()
