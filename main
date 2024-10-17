@@ -1,4 +1,4 @@
-# Define the Player class with camelCase
+# Define the Player class
 class Player:
     def __init__(self, name, salary, years):
         self.name = name
