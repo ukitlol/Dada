@@ -95,7 +95,7 @@ def main():
         Player("Amen Thompson", 9_249_960, 2),
         Player("Jock Landale", 8_000_000, 3),
         Player("Jae'Sean Tate", 7_065_217, 4, hasBirdRights=True),
-        Player("Alperen Sengun", 5_424_654, 3),
+        Player("Alperen Sengun", 5_424_654, 3, hasBirdRights=True),
         Player("Aaron Holiday", 4_668_000, 6),
         Player("Tari Eason", 3_695_160, 2),
         Player("Cam Whitmore", 3_379_080, 1)
